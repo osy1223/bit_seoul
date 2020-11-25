@@ -17,38 +17,27 @@ import pandas as pd
 iris = load_iris()
 print(iris.data)
 
-# data_min = np.min(iris.data)
-# print(data_min) #0.1
-
-# data_max = np.max(iris.data)
-# print(data_max) #7.9
-
 # feature 
 # ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)'] 피쳐 4개
 # label
 #['setosa' 'versicolor' 'virginica']
+ 
+x = iris.data
+y = iris.target
+print("init x.shape:", x.shape)
 
-print(iris.data.shape) #(150, 4)
-print(iris.target.shape) #(150,)  
 
-
-
-'''
 # 1.1 train_test_split
 x_train, x_test, y_train, y_test = train_test_split(
     iris.data, iris.target, train_size=0.8, random_state=42
 )
-print(x_train.shape) #(120, 4)
-print(y_train.shape) #(120,)
+print(x_train.shape) 
+print(y_train.shape)
 
 
 model = XGBClassifier(max_depth=4)
-# max_depth=4 : 4번 잘랐다
-
 model.fit(x_train, y_train)
-
 acc = model.score(x_test, y_test)
-
 print(acc)
 print(model.feature_importances_)
 
@@ -69,5 +58,4 @@ plt.show()
 
 #feautre importance(train 기준으로 슬라이스)
 # sepal length
-'''
 
