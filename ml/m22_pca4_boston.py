@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.datasets import boston_housing
+from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from tensorflow.keras.utils import to_categorical
@@ -12,50 +12,49 @@ from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 
 
 # 1. 데이터
-(x_train, y_train), (x_test, y_test) = boston_housing.load_data()
-print(x_train.shape, x_test.shape) # (404, 13) (102, 13)
-print(y_train.shape, y_test.shape) # (404,) (102,)
+datasets = load_boston()
+
+x = datasets.data
+y = datasets.target
+
+print("x.shape:", x.shape) #x.shape: (506, 13)
 
 
 # 1.1 데이터 전처리 
-# append (데이터 합치기)
-x = np.append(x_train, x_test, axis=0)
-y = np.append(y_train, y_test, axis=0)
-print("x.shape:", x.shape) # x.shape: (506, 13)
+# OneHotEncoding
 
+# append (데이터 합치기)
 
 # reshape
 
+# 1.3 Scaler -> 여기서의 스케일러는 PCA를 위한 스케일러
+scaler = StandardScaler()
+scaler.fit(x) # fit하고
+x= scaler.transform(x) # 사용할 수 있게 바꿔서 저장하자
 
 # PCA
 pca = PCA()
 pca.fit(x)
 cumsum = np.cumsum(pca.explained_variance_ratio_)
 d = np.argmax(cumsum >= 0.95) +1 #d : 우리가 필요한 n_components의 개수
-print("n_components:",d) # n_components: 2// 1
+print("n_components:",d) # n_components: 2 -> 스케일러 적용후 n_components: 9
 
 
-pca = PCA(n_components=2)
+pca = PCA(n_components=d)
 x2d = pca.fit_transform((x))
-print(x2d.shape) #(506, 2)
+print(x2d.shape) #(506, 9)
 
 
-pca_EVR = pca.explained_variance_ratio_
-print(sum(pca_EVR)) #0.9688751429772723
+# pca_EVR = pca.explained_variance_ratio_
+# print(sum(pca_EVR)) #0.9688751429772723
 
-# OneHotEncoding
-y = to_categorical(y)
 
 # 1.2 train_test_split
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size=500)
-print("split shape:", x_train.shape, x_test.shape) # 
+    x, y, train_size=0.8)
+print("x.split shape:", y_train.shape, x_test.shape) #(404,) (102, 13)
+print("y.split shape:", x_train.shape, x_test.shape) #(404, 13) (102, 13)
 
-# 1.3 Scaler
-scaler = StandardScaler()
-scaler.fit(x_train) # fit하고
-x_train = scaler.transform(x_train) # 사용할 수 있게 바꿔서 저장하자
-x_test = scaler.transform(x_test) # 사용할 수 있게 바꿔서 저장하자
 
 # 2.모델
 
@@ -75,7 +74,7 @@ model.compile(
 
 es = EarlyStopping(
     monitor='loss', 
-    patience=5, 
+    patience=10, 
     mode='auto')
 
 model.fit(x_train, y_train, 
@@ -106,5 +105,7 @@ boston DNN
 RMSE : 4.639773992883862
 R2 :  0.7306575547275955
 
-
+cumsum >= 0.95
+RMSE : 5.75830211367181
+R2 :  0.6487515340670459
 '''
