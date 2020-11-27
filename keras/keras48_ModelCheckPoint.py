@@ -51,8 +51,11 @@ modelpath = './model/cp-{epoch:02d}-{val_loss:.4f}.hdf5' #현재 모델 경로(s
 #파일명 : epoch:02니깐 2자리 정수 - val_loss .4니깐 소수 4째자리 표기
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-cp = ModelCheckpoint(filepath=modelpath, monitor='val_loss', 
-        save_best_only=True, mode='auto')
+cp = ModelCheckpoint(
+        filepath=modelpath, 
+        monitor='val_loss', 
+        save_best_only=True, 
+        mode='auto')
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', 
                 metrics=['acc'])
