@@ -18,13 +18,19 @@ divorce = divorce[['Age_partner_man',
                     'Level_of_education_partner_woman', 
                     'Marriage_duration']]
 
-divorce_age = pd.merge('Age_partner_man','Age_partner_woman', on='divorce_age')
-print(divorce_age) 
+divorce_age = divorce[['Age_partner_man', 'Age_partner_woman']]
+# print('divorce_age:',divorce_age) 
 
-# # 이혼일 기준으로 오름차순으로 변경
-# divorce = divorce.sort_values(['Divorce_date'], ascending=['True'])
-# # print(divorce) /
-# # print(divorce.dtypes)
+divorce_income = divorce.iloc[:, 2:4]
+# print('divorce_income',divorce_income)
+
+divorce_edu = divorce.iloc[:, 4:6]
+# print('divorce_edu',divorce_edu)
+
+# 이혼일 기준으로 오름차순으로 변경
+divorce = divorce.sort_values(['Divorce_date'], ascending=['True'])
+# print(divorce) /
+# print(divorce.dtypes)
 
 # '''
 # Level_of_education_partner_man        
@@ -33,13 +39,13 @@ print(divorce_age)
 # Level_of_education_partner_woman      object
 # '''
 
-# divorce.dropna(axis=0, how='any', inplace=True) 
-# # print(divorce) # [2429 rows x 7 columns]
+divorce.dropna(axis=0, how='any', inplace=True) 
+# print(divorce) # [2429 rows x 7 columns]
 
 
-# divorce['Level_of_education_partner_man'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
-# divorce['Level_of_education_partner_woman'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
+divorce['Level_of_education_partner_man'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
+divorce['Level_of_education_partner_woman'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
 
 
-# print(divorce.shape) #[2429 rows x 7 columns]
-# # print(divorce.dtypes)
+print(divorce.shape) #[2429 rows x 7 columns]
+# print(divorce.dtypes)

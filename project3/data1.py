@@ -29,6 +29,8 @@ bank = bank[['Customer_Age',
 bank = bank.sort_values(['Customer_Age'], ascending=['True'])
 # print(bank.dtypes)
 
+
+# 데이터 정리
 bank.replace("Unknown", np.nan, inplace=True) 
 bank.dropna(axis=0, how='any', inplace=True) 
 # print(bank)
@@ -38,15 +40,15 @@ bank['Card_Category'].replace({'Blue':1,'Silver':2, 'Gold':3, 'Platinum':4}, inp
 bank['Income_Category'].replace({'Less than $40K':4000,'$40K - $60K':5000, '$60K - $80K':7000, '$80K - $120K':10000, '$120K +':12000}, inplace=True)
 bank['Marital_Status'].replace({'Single':1,'Married':2, 'Divorced':3}, inplace=True)
 
-print(bank.shape) #(7081, 9)
+# print(bank.shape) #(7081, 9)
 # print(bank.dtypes)
-
 
 
 ##############################################################이혼
 divorce = pd.read_csv('./project3/divorces_2000-2015_translated.csv', 
                         header=0, index_col=0, sep=',')
 
+# 데이터 확인
 # divorce.info()
 '''
 Index: 4923 entries
@@ -78,7 +80,6 @@ Level_of_education_partner_woman      object
 divorce.dropna(axis=0, how='any', inplace=True) 
 # print(divorce) # [2429 rows x 7 columns]
 
-
 divorce['Level_of_education_partner_man'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
 divorce['Level_of_education_partner_woman'].replace({'OTRO':1,'PRIMARIA':2,'SECUNDARIA':3,  'PREPARATORIA':4, 'PROFESIONAL':5,'SIN ESCOLARIDAD':6}, inplace=True)
 
@@ -86,52 +87,72 @@ divorce['Level_of_education_partner_woman'].replace({'OTRO':1,'PRIMARIA':2,'SECU
 print(divorce.shape) #[2429 rows x 7 columns]
 # print(divorce.dtypes)
 
-###########################################################데이터 합치기
-merge = bank.append(divorce)
-# print(merge)
+# 나이 데이터 합치기 
+age1= divorce['Age_partner_man']
+# print('age1',age1)
+age2 = divorce['Age_partner_woman']
+# print('age2',age2)
+age3 = bank['Customer_Age']
+# print('age3',age3)
 
-merge = merge.fillna(merge.mean())
-# print(merge)
-print(merge.shape) #(9510, 17)
-###########################################################train, test 나누기
-# print(merge.columns)
-'''
-Index(['Customer_Age', 'Gender', 'Education_Level', 'Avg_Open_To_Buy',
-       'Card_Category', 'Months_on_book', 'Credit_Limit',
-       'Total_Revolving_Bal', 'Income_Category', 'Marital_Status',
-       'Age_partner_man', 'Monthly_income_partner_man_peso',
-       'Age_partner_woman', 'Monthly_income_partner_woman_peso',
-       'Level_of_education_partner_man', 'Level_of_education_partner_woman',
-       'Marriage_duration'],
-'''
-# print(bank.columns) 'Marital_Status':3 divorce
-# print(divorce.columns) Marriage_duration 
+age = pd.concat([age1, age2, age3], ignore_index=True)
+# print(age)
 
-# print(divorce['Marriage_duration'])
+# 수입 데이터 합치기
+income1 = divorce['Monthly_income_partner_man_peso']
+income2 = divorce['Monthly_income_partner_woman_peso']
 
-merge_x = merge[['Customer_Age', 'Gender', 'Education_Level', 'Avg_Open_To_Buy',
-       'Card_Category', 'Months_on_book', 'Credit_Limit',
-       'Total_Revolving_Bal', 'Income_Category', 'Age_partner_man', 'Monthly_income_partner_man_peso',
-       'Age_partner_woman', 'Monthly_income_partner_woman_peso',
-       'Level_of_education_partner_man', 'Level_of_education_partner_woman']]
-print(merge_x) #[9510 rows x 15 columns]
+income3 = pd.concat([income1, income2], ignore_index=True)
+income3 = income3.sort_values()
+#income3['income3'].replace({0<630:4000, 630<1260:5000, 1260<1890:7000, 1890<2520:10000, 2520<3200:12000}, inplace=True)/
+print(income3)
 
-merge_y = merge[['Marital_Status', 'Marriage_duration']]
-print(merge_y) #[9510 rows x 2 columns]
+# ###########################################################데이터 합치기
+# merge = bank.append(divorce)
+# # print(merge)
+
+# merge = merge.fillna(merge.mean())
+# # print(merge)
+# print(merge.shape) #(9510, 17)
+# ###########################################################train, test 나누기
+# # print(merge.columns)
+# '''
+# Index(['Customer_Age', 'Gender', 'Education_Level', 'Avg_Open_To_Buy',
+#        'Card_Category', 'Months_on_book', 'Credit_Limit',
+#        'Total_Revolving_Bal', 'Income_Category', 'Marital_Status',
+#        'Age_partner_man', 'Monthly_income_partner_man_peso',
+#        'Age_partner_woman', 'Monthly_income_partner_woman_peso',
+#        'Level_of_education_partner_man', 'Level_of_education_partner_woman',
+#        'Marriage_duration'],
+# '''
+# # print(bank.columns) 'Marital_Status':3 divorce
+# # print(divorce.columns) Marriage_duration 
+
+# # print(divorce['Marriage_duration'])
+
+# merge_x = merge[['Customer_Age', 'Gender', 'Education_Level', 'Avg_Open_To_Buy',
+#        'Card_Category', 'Months_on_book', 'Credit_Limit',
+#        'Total_Revolving_Bal', 'Income_Category', 'Age_partner_man', 'Monthly_income_partner_man_peso',
+#        'Age_partner_woman', 'Monthly_income_partner_woman_peso',
+#        'Level_of_education_partner_man', 'Level_of_education_partner_woman']]
+# print(merge_x) #[9510 rows x 15 columns]
+
+# merge_y = merge[['Marital_Status', 'Marriage_duration']]
+# print(merge_y) #[9510 rows x 2 columns]
 
 
-###########################################################np.save
-merge_x = merge_x.to_numpy()
-print(type(merge_x)) #<class 'numpy.ndarray'>
+# ###########################################################np.save
+# merge_x = merge_x.to_numpy()
+# print(type(merge_x)) #<class 'numpy.ndarray'>
 
-merge_y = merge_y.to_numpy()
-print(type(merge_y)) #<class 'numpy.ndarray'>
+# merge_y = merge_y.to_numpy()
+# print(type(merge_y)) #<class 'numpy.ndarray'>
 
-# np.save('./project3/merge_x.npy', arr=merge_x)
-# np.save('./project3/merge_y.npy', arr=merge_y)
+# # np.save('./project3/merge_x.npy', arr=merge_x)
+# # np.save('./project3/merge_y.npy', arr=merge_y)
 
-print(merge_x)
-print(merge_x.shape) 
+# print(merge_x)
+# print(merge_x.shape) 
 
-print(merge_y)
-print(merge_y.shape) 
+# print(merge_y)
+# print(merge_y.shape) 
