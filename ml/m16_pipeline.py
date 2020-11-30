@@ -37,11 +37,6 @@ print('acc:', pipe.score(x_test, y_test))
 # acc: 1.0
 
 
-
-
-
-
-
 '''
 parameters = [{"C": [1, 10, 100, 1000], "kernel": ["linear"]}, # 1번: 1-linear 2번: 10-lenear, 3번: 100-leanear 4번: 100-leanear - 4번
               {"C": [1, 10, 100, 1000], "kernel": ["rbf"], "gamma":[0.001, 0.0001]}, # rbf 당 감마 4 * 2 = 8번

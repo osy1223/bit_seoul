@@ -1,86 +1,137 @@
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, GridSearchCV
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, LSTM
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 import matplotlib.pyplot as plt
+from tensorflow.keras.utils import to_categorical
+from sklearn.svm import LinearSVC, SVC
+from sklearn.metrics import accuracy_score, r2_score
+from sklearn.pipeline import Pipeline
+from xgboost import XGBClassifier
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.utils.testing import all_estimators
+from xgboost import XGBClassifier, XGBRegressor
+from xgboost import plot_importance
+import xgboost as xgb
+import matplotlib as mpl
+
 
 ############################################ 데이터 불러오기
 x = np.load('./project3/merge_x.npy')
 y = np.load('./project3/merge_y.npy')
+indexes = np.load('./project3/merge_index.npy', allow_pickle=True)
 
-# print(x)
-# print(y)
+print(indexes)
+print(indexes.shape) #(2,)
+'''
+[Index([       'Customer_Age',     'Education_Level',     'Avg_Open_To_Buy',
+             'Card_Category',      'Months_on_book',        'Credit_Limit',
+       'Total_Revolving_Bal',     'Income_Category',   'Marriage_duration',
+                           2,                     1,                     0],
+      dtype='object')
+'''
+# print(x.shape) #(18224, 12)
+# print(y.shape) #(18224, 1)
 
-############################################ train_test_split
+########################################### train_test_split
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, random_state=44, shuffle=True, train_size=0.8
 )
+# print(x_test.shape) #(3645, 12)
+# print(y_test.shape) #(3645, 1)
 
-print(x_train.shape) #(7608, 15)
-print(x_test.shape) #(1902, 15)
+############################################ y 라벨링
+# y = to_categorical(y)
 
-# print(y_train)
-# print(y_test)
+########################################## 모델
+# kfold = KFold(n_splits=5, shuffle=True) 
+# model = RandomizedSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=2) 
+#RandomForestClassifier 모델을 GridSearchCV로 쓰겠다
 
-############################################ reshape
-x_train = x_train.reshape(7608, 5, 3)
-x_test = x_test.reshape(1902, 5, 3)
+# xgb_model = XGBClassifier(max_depth=6)
+# x_test = x_train[:10]
+# y_test = y_train[:10]
 
+evals = [(x_test, y_test)]
+xgb_model = XGBClassifier(
+    n_estimators=400, 
+    learning_rate=0.1, 
+    max_depth=6)
 
-############################################ 모델
-model = Sequential()
-model.add(LSTM(500, input_shape=(5,3)))
-model.add(Dense(200))
-model.add(Dense(100))
-model.add(Dense(80))
-model.add(Dense(1))
+# ############################################훈련
+# xgb_model.fit(x_train, y_train)
 
-model.summary()
+xgb_model.fit(x_train, y_train, 
+    early_stopping_rounds=200, 
+    eval_set=evals,
+    verbose=True,
+    eval_metric='merror' )
 
-############################################ 컴파일
-es = EarlyStopping(monitor='loss', patience=100, mode='auto')
-hist = TensorBoard(log_dir='graph', histogram_freq=0,
-        write_graph=True, write_images=True)
-
-model.compile(loss='mse', optimizer='adam',
-            metrics=['mse'])
-model.fit(x_train, y_train, epochs=1000, batch_size=32, verbose=1,
-            validation_split=0.5, callbacks=[es, hist])
-
-############################################ 평가, 예측
-loss, mse = model.evaluate(x_test, y_test, batch_size=32)
-print("loss : ",loss)
-print("mse : ",mse)
-
-'''
-loss :  99.37525939941406
-mse :  99.37525939941406
-
-loss :  27.20890998840332
-mse :  27.20890998840332
-'''
-
-############################################ 시각화
-# plt.figure(figsize=(10,6))
-
-# plt.subplot(2,1,1) #(2행 1열에서 1번째 그림)
-# plt.plot(hist.history['loss'], marker='.', c='red', label='loss') # x값과, y값이 들어가야 합니다
-# #x는 안넣어도 순서대로 list 형식으로 저장되서 안 넣어줬습니다
-# plt.plot(hist.history['val_loss'], marker='.', c='blue', label='val_loss')
-# plt.grid()
-# plt.title('loss')
-# plt.ylabel('loss')
-# plt.xlabel('epoch')
-# plt.legend(loc='upper right') #우측 상단에 legend(label 2개 loss랑 val_loss) 표시
-
-# plt.subplot(2,1,2) #(2행 1열에서 2번째 그림)
-# plt.plot(hist.history['mae'], marker='.', c='red')
-# plt.plot(hist.history['val_mae'], marker='.', c='blue')
-# plt.grid()
-# plt.title('mae')
-# plt.ylabel('mae')
-# plt.xlabel('epoch')
-# plt.legend(['mae', 'val_mae'])
-
+############################################ 피쳐임포턴스
+fig, ax = plt.subplots(figsize=(9,11))
+plot_importance(xgb_model, ax)
+print(ax)
 plt.show()
+
+
+# def drawPlt(index, feature_importances):
+#     n_features = len(xgb_model.feature_importances_)
+#     plt.rcParams["figure.figsize"] = (15, 15)
+#     plt.bar(np.arange(n_features), feature_importances)
+#     plt.ylabel("Feature Importances")
+#     plt.xlabel("Features")
+#     plt.xticks(np.arange(n_features), index, rotation=90)
+
+# drawPlt(indexes, xgb_model.feature_importances_)
+# plt.show()
+
+
+# ############################################평가, 예측
+# print('최적의 매개변수 :', model.best_estimator_)
+'''
+최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_estimators=200,
+                       n_jobs=-1)
+'''
+
+# y_predict = xgb_model.predict(x_test)
+# print('최종 예측률:', accuracy_score(y_test,y_predict))
+# y_predict = model.predict(x_test)
+# print('최종 예측률:', accuracy_score(y_test,y_predict))
+# y_predict_recovery = np.argmax(y_predict)
+# y_real = np.argmax(y_test)
+# print("real    : ", y_test[:10])
+# print("predict : ",y_predict[:10])
+
+'''
+RandomForestClassifier 모델을 GridSearchCV로 사용시
+최종 예측률 : 0.7706447187928669
+
+xgb 모델 사용시 
+최종 예측률: 0.8093278463648834
+real    :  [2. 2. 2. 2. 2. 2. 2. 1. 2. 1.]
+predict :  [2. 2. 2. 2. 2. 2. 2. 3. 1. 1.]
+'''
+
+
+############################################# 평가, 예측
+y_predict = xgb_model.predict(x_test)
+print('최종 예측률:', accuracy_score(y_test, y_predict))
+
+# 최종 예측률: 0.831275720164609
+############################################ 시각화
+# print(y_test.shape) # (3645,)  => 많으니까 100개만 출력 시도
+
+fig = plt.figure( figsize = (12, 4) )
+chart = fig.add_subplot(1,1,1)
+chart.plot(y_test[:100], marker='o', color='blue', label='real value')
+chart.plot(y_predict[:100], marker='^', color='red', label='predict value')
+chart.set_title('real value vs predict value')
+plt.xlabel('index')
+plt.ylabel('real vs predict')
+plt.legend(loc = 'best') 
+plt.show()
+

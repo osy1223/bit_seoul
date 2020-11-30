@@ -22,7 +22,7 @@ x_train,x_test, y_train,y_test = train_test_split(
     x,y, random_state=44, shuffle=True, test_size=0.2)
 
 # 모델 
-model = XGBRegressor(max_depth=4)
+model = XGBClassifier(max_depth=4)
 model.fit(x_train, y_train)
 
 # 평가 

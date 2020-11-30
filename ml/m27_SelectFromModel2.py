@@ -23,7 +23,7 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size=0.8, shuffle=True, random_state=66)
 
 
-----------------------------------------------------------
+# ----------------------------------------------------------
 
 parameters = [
     {'n_estimators' : [100,200],
@@ -37,7 +37,7 @@ kfold = KFold(n_splits=8, shuffle=True) #n_splits : 전체 데이터 중 몇개�
 # model = SVC()
 model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv=kfold, verbose=2) 
 
-----------------------------------------------------------
+# ----------------------------------------------------------
 
 model = XGBRegressor(n_jobs=-1)
 model.fit(x_train, y_train)
