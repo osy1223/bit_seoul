@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas import DataFrame as df
+import matplotlib.pyplot as plt
 
 #################################################################은행
 bank = pd.read_csv('./project3/BankChurners.csv', 
@@ -171,8 +172,14 @@ np.save('./project3/merge_x.npy', arr=merge_x)
 np.save('./project3/merge_y.npy', arr=merge_y)
 np.save('./project3/merge_index.npy', arr=merge_index)
 
-print(merge_x)
-print(merge_x.shape) 
+# print(merge_x)
+# print(merge_x.shape) 
 
-print(merge_y)
-print(merge_y.shape) 
+# print(merge_y)
+# print(merge_y.shape) 
+
+merge[:10].plot.bar(rot=0)
+plt.title("Income Divorce")
+plt.xlabel('feature')
+plt.ylabel('divorce')
+plt.show()
