@@ -43,25 +43,25 @@ plt.show()
 # ReLU계열
 #######################################################
 
-# ReLU(Rectified Linear Unit, 정류된 선형 유닛) 함수
-def relu_func(x): 
-    return (x>0)*x
-    # return np.maximum(0,x) # same
+# # ReLU(Rectified Linear Unit, 정류된 선형 유닛) 함수
+# def relu_func(x): 
+#     return (x>0)*x
+#     # return np.maximum(0,x) # same
  
-#그래프 출력
-plt.plot(x, relu_func(x), label="ReLU")
-plt.grid()
-plt.show()
+# #그래프 출력
+# plt.plot(x, relu_func(x), label="ReLU")
+# plt.grid()
+# plt.show()
  
-# Leaky ReLU(Rectified Linear Unit, 정류된 선형 유닛) 함수
-def leakyrelu_func(x): 
-    return (x>=0)*x + (x<0)*0.01*x # 알파값(보통 0.01) 조정가능
-    # return np.maximum(0.01*x,x) # same
+# # Leaky ReLU(Rectified Linear Unit, 정류된 선형 유닛) 함수
+# def leakyrelu_func(x): 
+#     return (x>=0)*x + (x<0)*0.01*x # 알파값(보통 0.01) 조정가능
+#     # return np.maximum(0.01*x,x) # same
  
-#그래프 출력
-plt.plot(x, leakyrelu_func(x), label="Leaky ReLU")
-plt.grid()
-plt.show()
+# #그래프 출력
+# plt.plot(x, leakyrelu_func(x), label="Leaky ReLU")
+# plt.grid()
+# plt.show()
  
 # ELU(Exponential linear unit)
 def elu_func(x):

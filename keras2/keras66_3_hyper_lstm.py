@@ -38,16 +38,16 @@ def build_model(drop=0.5, optimizer='adam'):
     return model
 
 def create_hyperparameters():
-    batches = [10, 20, 30, 40, 50]
+    batches = [10]
     optimizers = ['rmsprop', 'adam', 'adadelta']
-    dropout = np.linspace(0.1, 0.4, 5)
+    dropout = [0.1, 0.4]
     return{'batch_size':batches, 'optimizer':optimizers,
             'drop':dropout}
 hyperparameters = create_hyperparameters()
 
 # 우리가 만든 케라스 모델을 싸이킷런에 넣을수 있게 wrapping!
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
-model = KerasClassifier(build_fn=build_model, verbose=1)
+model = KerasClassifier(build_fn=build_model, verbose=0)
 
 # wrapping된 모델을 이용해서 싸이킷런의 GridSearchCV 이용!
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
@@ -55,11 +55,16 @@ from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 search = RandomizedSearchCV(model, hyperparameters, cv=3)
 search.fit(x_train, y_train)
 
-print('최적의 파라미터 :', search.best_params_)
 acc = search.score(x_test, y_test)
+print('최적의 파라미터 :', search.best_params_)
 print('최종 스코어:',acc)
+print('hyper_lstm')
 
-
+'''
+최적의 파라미터 : {'optimizer': 'adam', 'drop': 0.1, 'batch_size': 10}
+최종 스코어: 0.9437999725341797
+hyper_lstm
+'''
 
 
 
