@@ -85,9 +85,9 @@ model.fit(x_train, y_train,
 loss, acc = model.evaluate(x_test, y_test, batch_size=32)
 print("loss : ", loss)
 print("acc : ", acc)
-print('cifar100_conv1D')
+
 '''
 loss :  4.259828090667725
 acc :  0.1501999944448471
-cifar100_conv1D
+
 '''

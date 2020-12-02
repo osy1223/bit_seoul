@@ -9,11 +9,33 @@ bank = pd.read_csv('./project3/BankChurners.csv',
                         
 # 데이터 확인
 # bank.info()
+# print(bank)
+# print('bank.columns', bank.columns)
+'''
+bank.columns Index(['Attrition_Flag', 'Customer_Age', 'Gender', 'Dependent_count',
+       'Education_Level', 'Marital_Status', 'Income_Category', 'Card_Category',
+       'Months_on_book', 'Total_Relationship_Count', 'Months_Inactive_12_mon',
+       'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
+       'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
+       'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio',
+       'Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_1',
+       'Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_Dependent_count_Education_Level_Months_Inactive_12_mon_2'],
+      dtype='object')
+'''
+'''
+Int64Index([768805383, 818770008, 713982108, 769911858, 709106358, 713061558,
+            810347208, 818906208, 710930508, 719661558,
+            ...
+            712503408, 713755458, 716893683, 710841183, 713899383, 772366833,
+            710638233, 716506083, 717406983, 714337233],
+           dtype='int64', name='CLIENTNUM', length=10127)
+'''
 '''
 Int64Index: 10127 entries
 Data columns (total 22 columns):
 '''
 
+# 원하는 컬럼만 추출
 bank = bank[['Customer_Age', 
               'Education_Level', 
               'Avg_Open_To_Buy',
@@ -24,7 +46,7 @@ bank = bank[['Customer_Age',
               'Income_Category',
               'Marital_Status']]
 
-# print(bank) 
+# bank.info()
 # aa = bank['Marital_Status'].groupby(bank['Marital_Status']).count()
 # print(aa)
 # 나이 기준으로 오름차순으로 변경
@@ -45,19 +67,45 @@ aa = bank['Marital_Status'].groupby(bank['Marital_Status']).count()
 # print(aa)
 # print(bank.shape) #(7081, 9)
 # print(bank.dtypes)
-
+# bank.info()
 ##############################################################이혼
 divorce = pd.read_csv('./project3/divorces_2000-2015.csv', 
                         header=0, index_col=0, sep=',')
 
 # 데이터 확인
-divorce.info()
+# divorce.info()
+# print('divorce.columns', divorce.columns)
+'''
+divorce.columns Index(['Type_of_divorce', 'Nationality_partner_man', 'DOB_partner_man',
+       'Place_of_birth_partner_man', 'Birth_municipality_of_partner_man',
+       'Birth_federal_partner_man', 'Birth_country_partner_man',
+       'Age_partner_man', 'Residence_municipality_partner_man',
+       'Residence_federal_partner_man', 'Residence_country_partner_man',
+       'Monthly_income_partner_man_peso', 'Occupation_partner_man',
+       'Place_of_residence_partner_man', 'Nationality_partner_woman',
+       'DOB_partner_woman', 'DOB_registration_date_partner_woman',
+       'Place_of_birth_partner_woman', 'Birth_municipality_of_partner_woman',
+       'Birth_federal_partner_woman', 'Birth_country_partner_woman',
+       'Age_partner_woman', 'Place_of_residence_partner_woman',
+       'Residence_municipality_partner_woman',
+       'Residence_federal_partner_woman', 'Residence_country_partner_woman',
+       'Occupation_partner_woman', 'Monthly_income_partner_woman_peso',
+       'Date_of_marriage', 'Marriage_certificate_place',
+       'Marriage_certificate_municipality', 'Marriage_certificate_federal',
+       'Level_of_education_partner_man', 'Employment_status_partner_man',
+       'Level_of_education_partner_woman', 'Employment_status_partner_woman',
+       'Marriage_duration', 'Marriage_duration_months', 'Num_Children',
+       'Custody'],
+      dtype='object')
+'''
+
 '''
 Index: 4923 entries
 Data columns (total 40 columns):
 '''
 # print(divorce.columns)
 
+# 원하는 컬럼만 추출
 divorce = divorce[['Age_partner_man',
                     'Age_partner_woman',
                     'Monthly_income_partner_man_peso',
@@ -69,7 +117,7 @@ divorce = divorce[['Age_partner_man',
 
 # 이혼일 기준으로 오름차순으로 변경
 divorce = divorce.sort_values(['Divorce_date'], ascending=['True'])
-# print(divorce) /
+# print(divorce) 
 # print(divorce.dtypes)
 
 '''
@@ -85,9 +133,7 @@ divorce['Level_of_education_partner_woman'].replace({'OTRO':1,'PRIMARIA':2,'SECU
 
 # 나이 데이터 합치기 
 age1= divorce['Age_partner_man']
-# print('age1',age1)
 age2 = divorce['Age_partner_woman']
-# print('age2',age2)
 age = pd.concat([age1, age2], ignore_index=True)
 # print('age:',age)
 # print(age.shape) # (9846,)
@@ -98,7 +144,6 @@ education2 = divorce['Level_of_education_partner_woman']
 education = pd.concat([education1, education2], ignore_index=True)
 # print('education:',education)
 # print(education.shape) #(9846,)
-
 
 # 수입 데이터 합치기
 income1 = divorce['Monthly_income_partner_man_peso']
@@ -118,8 +163,9 @@ result = pd.concat([age, education, income], axis=1)
 result.dropna(axis=0, how='any', inplace=True) 
 divorce = divorce.append(result)
 divorce.fillna(divorce.mean(), inplace=True) 
+# result.info()
+# divorce.info()
 # print(divorce) #[11143 rows x 4 columns]
-
 
 ##########################################################데이터 합치기
 merge = bank.append(divorce)
@@ -168,9 +214,9 @@ print(type(merge_x)) #<class 'numpy.ndarray'>
 merge_y = merge_y.to_numpy()
 print(type(merge_y)) #<class 'numpy.ndarray'>
 
-np.save('./project3/merge_x.npy', arr=merge_x)
-np.save('./project3/merge_y.npy', arr=merge_y)
-np.save('./project3/merge_index.npy', arr=merge_index)
+# np.save('./project3/merge_x.npy', arr=merge_x)
+# np.save('./project3/merge_y.npy', arr=merge_y)
+# np.save('./project3/merge_index.npy', arr=merge_index)
 
 # print(merge_x)
 # print(merge_x.shape) 
@@ -178,8 +224,9 @@ np.save('./project3/merge_index.npy', arr=merge_index)
 # print(merge_y)
 # print(merge_y.shape) 
 
-merge[:10].plot.bar(rot=0)
+merge[:15].plot.bar(rot=0)
 plt.title("Income Divorce")
 plt.xlabel('feature')
 plt.ylabel('divorce')
 plt.show()
+print('merge[1]',merge[1])
