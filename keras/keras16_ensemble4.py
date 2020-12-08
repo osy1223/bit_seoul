@@ -21,7 +21,6 @@ x1_train, x1_test = train_test_split(
     x1, shuffle=True, train_size=0.7
 )
 
-from sklearn.model_selection import train_test_split
 y1_train, y1_test, y2_train, y2_test, y3_train, y3_test = train_test_split(
     y1,y2,y3, shuffle=True, train_size=0.7
 )
@@ -79,3 +78,21 @@ result = model.evaluate(x1_test, [y1_test, y2_test, y3_test],
 batch_size=8)
 
 print("result :", result)
+
+'''
+result : [3084.46142578125, 
+        1007.8184814453125, 
+        1052.384765625, 
+        1024.258056640625, 
+        1007.8184814453125, 
+        1052.384765625, 
+        1024.258056640625]
+
+RMSE_1:  45.80446268668051
+RMSE_2:  32.44402403719858
+RMSE_3:  32.58704786288083 
+
+R2_1:  -1.403064429968192
+R2_2:  -0.20564446896169666
+R2_3:  -0.21629764570312707
+'''

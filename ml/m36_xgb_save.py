@@ -25,23 +25,24 @@ model.fit(x_train, y_train)
 acc = model.score(x_test, y_test)
 print(acc)
 
-#파이썬 제공하는 저장
-import pickle
-pickle.dump(model, open('./save/xgb_save/cancer.pickle.dat', 'wb'))
+
+# import pickle
+# pickle.dump(model, open('./save/xgb_save/cancer.pickle.dat', 'wb'))
 #바이너리(2진법 0,1) 파일을 쓰기(저장) 위해서는 wb 로 지정
+# import joblib
+# joblib.dump(model, './save/xgb_save/cancer.joblib.dat')
+# xgb에서 제공하는 저장
+model.save_model('./save/xgb_save/cancer.xgb.model')
 print('저장완료')
-'''
-0.9649122807017544
-저장완료
-'''
+
 
 # 모델+가중치 
-model2 = pickle.load(open('./save/xgb_save/cancer.pickle.dat', 'rb'))
-#바이너리 파일을 읽기 위해서는 파일모드를 rb 
+# model2 = pickle.load(open('./save/xgb_save/cancer.pickle.dat', 'rb'))
+# model2 = joblib.load('./save/xgb_save/cancer.joblib.dat')
+# #바이너리 파일을 읽기 위해서는 파일모드를 rb 
+model2 = XGBClassifier() # model2는 xgb라는 걸 명시
+model2.load_model('./save/xgb_save/cancer.xgb.model')
 print('불러왔다')
+
 acc2 = model2.score(x_test, y_test)
 print('acc2:', acc2)
-'''
-불러왔다
-acc2: 0.9649122807017544
-'''

@@ -20,7 +20,6 @@ x1_train, x1_test, x2_train, x2_test = train_test_split(
     x1,x2, shuffle=True, train_size=0.7
 )
 
-from sklearn.model_selection import train_test_split
 y1_train, y1_test = train_test_split(
     y1, shuffle=True, train_size=0.7
 )
@@ -54,32 +53,22 @@ from tensorflow.keras.layers import Concatenate, concatenate
 
 merge1 = Concatenate()([output1, output2])
 
-middle1 = Dense(3000)(merge1)
-middle2 = Dense(7000)(middle1)
+middle1 = Dense(300)(merge1)
+middle2 = Dense(200)(middle1)
 middle3 = Dense(1000)(middle2)
 middle4 = Dense(100)(middle3)
-middle5 = Dense(2000)(middle4)
-middle6 = Dense(3000)(middle5)
-middle7 = Dense(1000)(middle6)
-middle8 = Dense(5000)(middle7)
-middle9 = Dense(1000)(middle8)
 
 
 ################# output 모델 구성 (output1개라 분기 필요없음)
-output1 = Dense(30)(middle9)
+output1 = Dense(30)(middle4)
 output1_1 = Dense(7)(output1)
 output1_2 = Dense(3)(output1_1)
 output1_3 = Dense(3)(output1_2)
 output1_4 = Dense(3)(output1_3)
-output1_5 = Dense(3)(output1_4)
-output1_6 = Dense(3)(output1_5)
-output1_7 = Dense(3)(output1_6)
-output1_8 = Dense(3)(output1_7)
-output1_9 = Dense(3)(output1_8)
 
 # 모델 정의
 model = Model(inputs = [input1, input2], 
-              outputs = output1_9)
+              outputs = output1_4)
 
 model.summary()
 
@@ -107,5 +96,7 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y1_test, y1_pred)
 print("R2 : ",r2)
 
-
-# 파라미터 튠 까지 하세요~_~
+'''
+RMSE : 33.78324804775722
+R2 :  -0.5348296420453834
+'''

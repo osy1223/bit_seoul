@@ -46,9 +46,16 @@ from tensorflow.keras.callbacks import EarlyStopping #조기종료
 # 최소값보다 내려가면 계속진행, 올라간다면 멈춤
 # patience 몇번까지 봐줄거냐? 바로 끝내기보다는 조금 더 지켜보고 최소값을 정하겠다. 
 # min/max 헷갈릴 때 auto
-early_stopping = EarlyStopping(monitor='loss', patience=100, mode='auto')
+early_stopping = EarlyStopping(
+    monitor='loss', 
+    patience=100, 
+    mode='auto')
 
-model.fit(x, y, epochs=1000, batch_size=1, verbose=1, callbacks=[early_stopping])
+model.fit(x, y, 
+    epochs=1000, 
+    batch_size=1, 
+    verbose=1, 
+    callbacks=[early_stopping])
 
 
 # 4. 평가, 예측

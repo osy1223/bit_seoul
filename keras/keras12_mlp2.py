@@ -5,11 +5,11 @@ x=np.array((range(1,101), range(311, 411), range(100)))
 y=np.array((range(101,201)))
 
 
-print(x.shape)
-print(y.shape)
+print(x.shape) #(3, 100)
+print(y.shape) #(100,)
 
 x=x.transpose()
-print(x.shape)
+print(x.shape) #(100, 3)
 # x=x.transpose()로도 가능
 
 from sklearn.model_selection import train_test_split
